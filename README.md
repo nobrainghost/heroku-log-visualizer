@@ -12,13 +12,25 @@ A **Heroku log visualization tool** that provides a real-time dashboard for moni
 -  **Real-time updates** via WebSockets (future)
 -  **Easily deployable** via Docker
 
----
+## 🏗️ Project Structure
 
-## Project Structure
-heroku-log-visualizer/ │── backend/ # FastAPI backend │ ├── app.py # Main API logic │ ├── database.py # Database connection │ ├── log_processor.py # Handles log parsing/filtering │ ├── requirements.txt # Python dependencies │ ├── Dockerfile # Backend containerization │── frontend/ # React/Vue dashboard │ ├── src/ │ ├── public/ │ ├── package.json # Frontend dependencies │ ├── Dockerfile # Frontend containerization │── .env.example # Environment variables template │── docker-compose.yml # One-command setup │── README.md # This file
-
-
----
+```bash
+heroku-log-visualizer/
+├── backend/               # FastAPI backend
+│   ├── app.py             # Main API logic
+│   ├── database.py        # Database connection
+│   ├── log_processor.py   # Handles log parsing/filtering
+│   ├── requirements.txt   # Python dependencies
+│   ├── Dockerfile         # Backend containerization
+├── frontend/              # dashboard
+│   ├── src/
+│   ├── public/
+│   ├── package.json       # Frontend dependencies
+│   ├── Dockerfile         # Frontend containerization
+├── .env.example           # Environment variables template
+├── docker-compose.yml     # One-command setup
+└── README.md              # This file
+```
 
 ##  Future Enhancements
 
