@@ -81,10 +81,10 @@ func saveLog(source, message string) error {
 }
 
 func receiveLogs(c *gin.Context) {
-	apiKey := c.GetHeader("Authorization")
-	expectedKey := os.Getenv("LOG_API_KEY")
+	herokuUserAgent := "Logplex"
+	userAgent := c.GetHeader("User-Agent")
 
-	if apiKey != "Bearer "+expectedKey {
+	if !strings.Contains(userAgent, herokuUserAgent) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		c.Abort()
 		return
@@ -95,17 +95,17 @@ func receiveLogs(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error reading request body"})
 		return
 	}
-	logData := strings.TrimSpace(string(body))
 
+	logData := strings.TrimSpace(string(body))
 	parts := strings.SplitN(logData, " ", 2)
 	if len(parts) < 2 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid log entry"})
 		return
 	}
+
 	source := parts[0]
 	message := parts[1]
 
-	// Asynchronous Save
 	go func() {
 		err := saveLog(source, message)
 		if err != nil {
