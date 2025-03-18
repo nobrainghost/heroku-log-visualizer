@@ -81,6 +81,15 @@ func saveLog(source, message string) error {
 }
 
 func receiveLogs(c *gin.Context) {
+	apiKey := c.GetHeader("Authorization")
+	expectedKey := os.Getenv("LOG_API_KEY")
+
+	if apiKey != "Bearer "+expectedKey {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		c.Abort()
+		return
+	}
+
 	body, err := io.ReadAll(c.Request.Body)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error reading request body"})
@@ -96,16 +105,15 @@ func receiveLogs(c *gin.Context) {
 	source := parts[0]
 	message := parts[1]
 
-	//Asynchronous Save
+	// Asynchronous Save
 	go func() {
 		err := saveLog(source, message)
 		if err != nil {
 			fmt.Println("Error saving log entry: ", err)
 		}
 	}()
-	fmt.Println("Log entry saved successfully")
-	c.JSON(http.StatusOK, gin.H{"status": "Log entry saved"})
 
+	c.JSON(http.StatusOK, gin.H{"status": "Log entry saved"})
 }
 
 func getLogs(c *gin.Context) {
