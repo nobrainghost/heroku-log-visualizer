@@ -129,10 +129,11 @@ func getLogs(c *gin.Context) {
 }
 
 func main() {
+	gin.SetMode(gin.ReleaseMode)
+
 	initDB()
 	router := gin.Default()
-
-	// Apply middleware
+	router.SetTrustedProxies([]string{"0.0.0.0"})
 	router.Use(rateLimitMiddleware())
 
 	// Public route for Heroku logs
