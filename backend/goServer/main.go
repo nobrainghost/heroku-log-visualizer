@@ -115,6 +115,18 @@ func receiveLogs(c *gin.Context) {
 }
 
 func getLogs(c *gin.Context) {
+	expectedAPIKey := os.Getenv("LOG_API_KEY")
+	if expectedAPIKey == "" {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Server misconfiguration: API key missing"})
+		return
+	}
+
+	apiKey := c.GetHeader("X-API-Key")
+	if apiKey != expectedAPIKey {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized: Invalid API key"})
+		return
+	}
+
 	rows, err := db.Query("SELECT id, source, timestamp, message FROM logs ORDER BY timestamp DESC LIMIT 100")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch logs"})
